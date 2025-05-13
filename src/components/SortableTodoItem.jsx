@@ -13,18 +13,21 @@ function SortableTodoItem({ todo, removeTodo, updateTodo }) {
       {...attributes}
       ref={setNodeRef}
       style={style}
-      
+
 
     >
       <label className="opcion" >
 
-         <input type="checkbox"
-                onClick={() =>{
-                updateTodo(todo.id)}}
+        <input type="checkbox"
+          checked={todo.done}
+          onChange={() => {
+            updateTodo(todo.id);
+          }}
         />
 
-        <p 
-         {...listeners}
+
+        <p
+          {...listeners}
           style={todo.done ? { textDecoration: "line-through", color: "var(--inactiveFonts)" } : null}
           className="todo-text"
         >

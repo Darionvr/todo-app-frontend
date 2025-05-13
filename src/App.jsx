@@ -14,6 +14,7 @@ function App() {
 
 
   const getTodos = async () => {
+    
     const response = await fetch('https://back-todo-production.up.railway.app/')
     const todos = await response.json();
     setTodos(todos)
