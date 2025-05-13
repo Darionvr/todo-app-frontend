@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { DndContext, closestCorners, closestCenter } from '@dnd-kit/core';
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import SortableTodoItem from './components/SortableTodoItem';
+
 
 function App() {
 
   const [todos, setTodos] = useState([]);
   const [title, setTitle] = useState("");
   const [filter, setFilter] = useState("all");
+
 
   const getTodos = async () => {
     const response = await fetch('https://back-todo-production.up.railway.app/')
@@ -48,6 +54,7 @@ function App() {
   }
 
   const updateTodo = async (id) => {
+
     const response = await fetch(`https://back-todo-production.up.railway.app/${id}`, {
       method: "PUT",
     });
@@ -72,14 +79,14 @@ function App() {
     if (response.status !== 200) {
       return alert("Something went wrong while clearing completed todos");
     }
-    
+
 
     const data = await response.json();
     setTodos(data.todos);
   }
   const updateFilterStyles = (selectedFilter) => {
     const filters = ["all", "active", "completed"];
-  
+
     filters.forEach(filter => {
       const element = document.getElementById(filter);
       if (element) {
@@ -105,7 +112,7 @@ function App() {
 
   const activeLight = () => {
     document.body.classList.add('light-mode')
-    
+
 
   }
 
@@ -113,6 +120,18 @@ function App() {
     document.body.classList.remove('light-mode')
 
   }
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event
+
+    setTodos((todo) => {
+      const oldIndex = filterTodos(filter).findIndex(task => task.id === active.id)
+      const newIndex = filterTodos(filter).findIndex(task => task.id === over.id)
+      return arrayMove(todo, oldIndex, newIndex)
+
+    })
+  }
+
 
   return (
     <>
@@ -141,33 +160,32 @@ function App() {
         </form>
 
         <ul className='todo-list'>
-          {filterTodos(filter).map((todo, index) => (
-            <li key={index}>
-              <label className="opcion">
-                <input
-                  type="checkbox"
-                  checked={todo.done} 
-                  onChange={() => updateTodo(todo.id)}
-                />
-                <p
-                  style={todo.done ? { textDecoration: "line-through", color: "var(--inactiveFonts)" } : null}
-                  className="todo-text">
-                  {todo.title}
-                </p>
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
 
-              </label>
-              <img
-                onClick={() => removeTodo(todo.id)}
-                className='cross-icon'
-                src="images/icon-cross.svg" alt="remove cross icon" />
-            </li>
-          ))}
+
+            <SortableContext items={todos.map(t => t.id)} strategy={verticalListSortingStrategy}>
+              {filterTodos(filter).map((todo) => (
+                
+                  <SortableTodoItem
+                    key={todo.id}
+                    todo={todo}
+                    updateTodo={updateTodo}
+                    removeTodo={removeTodo}
+                  
+                  />
+             
+              ))}
+            </SortableContext>
+          </DndContext>
+
+
           <li className="last-label">
             <span>{todos.length} items left</span>
             <button className='action-button' onClick={clearCompleted}> Clear Completed</button>
           </li>
 
         </ul>
+
         <ul>
           <li className="button-label">
             <button className="action-button" id='all' onClick={() => setFilter("all")}>
