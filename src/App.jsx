@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import { DndContext, closestCorners, closestCenter } from '@dnd-kit/core';
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+
 import SortableTodoItem from './components/SortableTodoItem';
 
 
@@ -23,6 +23,9 @@ function App() {
     getTodos();
   }, []);
 
+  useEffect(() => {
+  localStorage.setItem('todos', JSON.stringify(todos));
+}, [todos]);
 
   const addTodo = async (title) => {
     const response = await fetch('https://back-todo-production.up.railway.app/', {
