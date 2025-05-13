@@ -14,7 +14,7 @@ function App() {
 
 
   const getTodos = async () => {
-    
+
     const response = await fetch('https://back-todo-production.up.railway.app/')
     const todos = await response.json();
     setTodos(todos)
@@ -24,18 +24,13 @@ function App() {
     getTodos();
   }, []);
 
-  useEffect(() => {
-  localStorage.setItem('todos', JSON.stringify(todos));
-}, [todos]);
-
-  const addTodo = async (title) => {
-    const response = await fetch('https://back-todo-production.up.railway.app/', {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title }),
-    })
-    const todo = await response.json();
-    setTodos((prevTodos) => [...prevTodos, todo]);
+  const addTodo = (title) => {
+    const newTodo = {
+      id: Date.now(), // Generar un ID único basado en el timestamp
+      title,
+      done: false,
+    };
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
   }
 
 
@@ -47,47 +42,25 @@ function App() {
   };
 
 
-  const removeTodo = async (id) => {
-    const response = await fetch(`https://back-todo-production.up.railway.app/${Number(id)}`, {
-      method: "DELETE",
-    });
-    if (response.status !== 200) {
-      return alert("Something went wrong");
-    }
-    setTodos(todos.filter((todo) => todo.id !== id));
-  }
+  const removeTodo = (id) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  };
 
-  const updateTodo = async (id) => {
-
-    const response = await fetch(`https://back-todo-production.up.railway.app/${id}`, {
-      method: "PUT",
-    });
-    if (response.status !== 200) {
-      return alert("Something went wrong");
-    }
-
-    setTodos(todos.map((todo) => {
+  const updateTodo = (id) => {
+  setTodos((prevTodos) =>
+    prevTodos.map((todo) => {
       if (todo.id === id) {
-        todo.done = !todo.done;
+        return { ...todo, done: !todo.done }; // Alternar el estado de "done"
       }
       return todo;
     })
-    );
-  }
+  );
+};
 
-  const clearCompleted = async () => {
-    const response = await fetch('https://back-todo-production.up.railway.app/clear-completed', {
-      method: "DELETE",
-    });
+const clearCompleted = () => {
+  setTodos((prevTodos) => prevTodos.filter((todo) => !todo.done));
+};
 
-    if (response.status !== 200) {
-      return alert("Something went wrong while clearing completed todos");
-    }
-
-
-    const data = await response.json();
-    setTodos(data.todos);
-  }
   const updateFilterStyles = (selectedFilter) => {
     const filters = ["all", "active", "completed"];
 
@@ -169,15 +142,15 @@ function App() {
 
             <SortableContext items={todos.map(t => t.id)} strategy={verticalListSortingStrategy}>
               {filterTodos(filter).map((todo) => (
-                
-                  <SortableTodoItem
-                    key={todo.id}
-                    todo={todo}
-                    updateTodo={updateTodo}
-                    removeTodo={removeTodo}
-                  
-                  />
-             
+
+                <SortableTodoItem
+                  key={todo.id}
+                  todo={todo}
+                  updateTodo={updateTodo}
+                  removeTodo={removeTodo}
+
+                />
+
               ))}
             </SortableContext>
           </DndContext>
