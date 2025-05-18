@@ -107,7 +107,9 @@
  }
  
  .todo-list{
-   li{
+  border: none;
+  
+   article{
      display: flex;
      align-items: center;
      justify-content: space-between;
@@ -176,7 +178,7 @@
    background-position: 80% 70%;
  }
  
- ul {
+ section {
    background-color: var(--labels);
    list-style: none;
    border-radius: 5px;
@@ -184,7 +186,7 @@
    padding: 0;
  }
  
- li {
+ article {
    padding: 1rem;
    border-bottom: solid 1px var(--buttonBorder);
  

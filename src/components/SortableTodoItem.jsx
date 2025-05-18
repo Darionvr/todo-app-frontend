@@ -8,7 +8,7 @@ function SortableTodoItem({ todo, removeTodo, updateTodo }) {
   const style = { transition, transform: CSS.Transform.toString(transform) };
 
   return (
-    <li
+    <article
       key={todo.id}
       {...attributes}
       ref={setNodeRef}
@@ -40,7 +40,7 @@ function SortableTodoItem({ todo, removeTodo, updateTodo }) {
         src="images/icon-cross.svg"
         alt="remove cross icon"
       />
-    </li>
+    </article>
   );
 }
 

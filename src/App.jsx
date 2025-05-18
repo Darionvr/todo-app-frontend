@@ -136,7 +136,7 @@ const clearCompleted = () => {
             onChange={(e) => setTitle(e.target.value)} />
         </form>
 
-        <ul className='todo-list'>
+        <section className='todo-list'>
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
 
 
@@ -156,15 +156,15 @@ const clearCompleted = () => {
           </DndContext>
 
 
-          <li className="last-label">
+          <article className="last-label">
             <span>{todos.length} items left</span>
             <button className='action-button' onClick={clearCompleted}> Clear Completed</button>
-          </li>
+          </article>
 
-        </ul>
+        </section>
 
-        <ul>
-          <li className="button-label">
+        <section>
+          <article className="button-label">
             <button className="action-button" id='all' onClick={() => setFilter("all")}>
               All
             </button>
@@ -174,8 +174,8 @@ const clearCompleted = () => {
             <button className="action-button" id='completed' onClick={() => setFilter("completed")}>
               Completed
             </button>
-          </li>
-        </ul>
+          </article>
+        </section>
 
 
 
